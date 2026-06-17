@@ -347,6 +347,14 @@
                           <el-icon><Document /></el-icon>
                           导出 CSV
                         </el-button>
+                        <el-button
+                          type="primary"
+                          @click="exportExcel"
+                          :disabled="!hasDataToExport"
+                        >
+                          <el-icon><Document /></el-icon>
+                          导出 Excel
+                        </el-button>
                       </div>
                     </div>
                   </template>
@@ -492,6 +500,11 @@
                 <div class="api-section">
                   <h3>POST /api/export/csv</h3>
                   <p>导出 CSV 格式文件</p>
+                </div>
+
+                <div class="api-section">
+                  <h3>POST /api/export/excel</h3>
+                  <p>导出 Excel (xlsx) 格式文件，支持表头样式美化、列宽自动调整、冻结首行</p>
                 </div>
 
                 <el-divider />

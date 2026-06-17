@@ -24,6 +24,7 @@ app.get('/api', (req, res) => {
       'POST /api/generate/page': '分页生成数据',
       'POST /api/export/json': '导出JSON',
       'POST /api/export/csv': '导出CSV',
+      'POST /api/export/excel': '导出Excel',
       'GET /api/types': '获取支持的类型和格式',
       'GET /api/templates': '获取预设模板'
     }

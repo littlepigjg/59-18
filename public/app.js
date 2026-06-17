@@ -482,6 +482,53 @@ Content-Type: application/json
       }
     };
 
+    const exportExcel = async () => {
+      try {
+        let exportCount, exportData;
+
+        if (paginationMode.value === 'client') {
+          exportCount = generatedData.value.length;
+          exportData = generatedData.value;
+        } else {
+          ElMessage.info(`正在生成 ${serverTotalCount.value.toLocaleString()} 条数据并导出为 Excel，请稍候...`);
+          exportCount = serverTotalCount.value;
+          exportData = null;
+        }
+
+        const response = await fetch('/api/export/excel', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: modelForm,
+            count: exportCount,
+            seed: seed.value,
+            data: exportData
+          })
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || '导出失败');
+        }
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${modelForm.name || 'data'}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        ElMessage.success(`Excel 导出成功，共 ${exportCount.toLocaleString()} 条数据`);
+      } catch (error) {
+        ElMessage.error('导出失败：' + error.message);
+      }
+    };
+
     const applyTemplate = async (templateName) => {
       if (!templateName) return;
 
@@ -647,6 +694,7 @@ Content-Type: application/json
       onPageSizeChange,
       exportJSON,
       exportCSV,
+      exportExcel,
       applyTemplate
     };
   }

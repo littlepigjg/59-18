@@ -137,6 +137,30 @@ router.post('/export/csv', (req, res) => {
   }
 });
 
+router.post('/export/excel', async (req, res) => {
+  try {
+    const { model, count = 100, seed, data } = req.body;
+
+    let exportData = data;
+    let exportModel = model;
+
+    if (!exportData || !Array.isArray(exportData)) {
+      const parsedModel = modelParser.parse(model);
+      const generator = new DataGenerator(seed);
+      exportData = generator.generate(parsedModel, count);
+      exportModel = parsedModel;
+    }
+
+    const filename = `${exportModel.name || 'data'}.xlsx`;
+    await DataConverter.downloadExcel(res, exportData, exportModel.fields, filename);
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 router.get('/types', (req, res) => {
   res.json({
     success: true,
